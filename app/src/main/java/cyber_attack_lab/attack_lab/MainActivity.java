@@ -33,56 +33,54 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /**if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-        }**/
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED)  {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, STORAGE_PERMISSION_CODE);
+        }
 
-        nameInput = (EditText) findViewById(R.id.nameInput);
-        helloText = (TextView) findViewById(R.id.helloText);
-        submitButton = (Button) findViewById(R.id.submitButton);
-        cameraButton = (Button) findViewById(R.id.cameraButton);
-        exitBtn = (Button) findViewById(R.id.exitBtn);
+        nameInput = (EditText)findViewById(R.id.nameInput);
+        helloText = (TextView)findViewById(R.id.helloText);
+        submitButton = (Button)findViewById(R.id.submitButton);
+        cameraButton = (Button)findViewById(R.id.cameraButton);
+        exitBtn = (Button)findViewById(R.id.exitBtn);
 
         submitButton.setEnabled(true);
         cameraButton.setEnabled(false);
 
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            /**Toast.makeText(MainActivity.this, "You have already granted this permission!", Toast.LENGTH_SHORT).show();**/
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                name = nameInput.getText().toString();
+
+                if (name.length() != 0) {
+                    helloText.setText("Hello " + name + ", congratulation!");
+                    submitButton.setEnabled(false);
+                    cameraButton.setEnabled(true);
+                    nameInput.setEnabled(false);
+                    nameInput.getText().clear();
+                    nameInput.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    nameInput.setHint("");
+                } else {
                     name = nameInput.getText().toString();
-
-                    if (name.length() != 0) {
-                        helloText.setText("Hello " + name + ", congratulation!");
-                        submitButton.setEnabled(false);
-                        cameraButton.setEnabled(true);
-                        nameInput.setEnabled(false);
-                        nameInput.getText().clear();
-                        nameInput.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                        nameInput.setHint("");
-                    } else {
-                        name = nameInput.getText().toString();
-                    }
                 }
-            });
+            }
+        });
 
-            cameraButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openMain2Activity();
-                }
-            });
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMain2Activity();
+            }
+        });
 
-            exitBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    System.exit(0);
-                }
-            });
-        } else {
-            System.exit(0);
-        }
+        exitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.exit(0);
+            }
+        });
+
     }
 
     public void openMain2Activity() {
@@ -90,29 +88,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void requestCameraPermission(){
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)){
-            new AlertDialog.Builder(this)
-                    .setTitle("Permission needed")
-                    .setMessage("This permission is need because of this and that")
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.CAMERA}, STORAGE_PERMISSION_CODE);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create().dismiss();
-        }
-        else{
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, STORAGE_PERMISSION_CODE);
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -123,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else{
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+                System.exit(0);
             }
         }
     }
